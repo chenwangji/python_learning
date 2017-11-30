@@ -44,4 +44,8 @@ def is_palindrome(n):
             break
     return flag
 
+# # 更简单的方法
+# def is_palindrome(n):
+#     return str(n)[::-1] == str(n) # str(n)[::-1] 能反转iterable对象
+
 print(list(filter(is_palindrome, range(1, 1000))))
