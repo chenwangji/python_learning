@@ -33,3 +33,17 @@ def myFn2():
 myFn2() # execute myFn2()
         # '23456'
 
+# functools.wraps
+import functools 
+def log3(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kw):
+        print('call %s()' % func.__name__)
+        return func(*args, **kw)
+    return wrapper
+
+@log3
+def myFn3():
+    print(34567)
+
+myFn3()
