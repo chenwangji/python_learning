@@ -44,9 +44,9 @@ def show_chart(rate, **count):
   pie = Pie(u'%s的微信好友性别比例' % (friends[0]['NickName']), title_pos='center')
   attr = ['男性', '女性', '其他']
   v1 = [count['male'], count['female'], count['other']]
-  pie.add("", attr, v1, radius=[40, 75], label_text_color=None,
-        is_label_show=True, legend_orient='vertical',
-        legend_pos='left')
+  pie.add("", attr, v1, radius=[40, 75], label_text_color=None,\
+    is_label_show=True, legend_orient='vertical',
+    legend_pos='left')
   pie.render()
 
 comput_sex_rate(friends)
