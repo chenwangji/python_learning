@@ -1,5 +1,6 @@
 import requests
 import os
+import re
 from lxml import html
 
 FILE_NAME = 'top250.txt'
@@ -20,20 +21,25 @@ def get_movies(base_url):
 
 def get_sigle_page_movies(current_html, start):
   movie_index = start
-  for i in current_html.xpath('//div[@class="info"]'):
+  for i in current_html.xpath('//div[@class="item"]'):
     try:
       # index
       movie_index += 1
       # 电影名称
-      movie_title = i.xpath('div[@class="hd"]/a/span[@class="title"]/text()')[0]
+      movie_title = i.xpath('div[@class="info"]/div[@class="hd"]/a/span[@class="title"]/text()')[0]
       # 电影信息
-      movie_info = i.xpath('div[@class="bd"]/p[1]/text()')[0].strip()
+      movie_info = i.xpath('div[@class="info"]/div[@class="bd"]/p[1]/text()')[0].strip()
       # 电影评分
-      move_rating_num = i.xpath('div[@class="bd"]/div[@class="star"]/span[@class="rating_num"]/text()')[0]
+      movie_rating_num = i.xpath('div[@class="info"]/div[@class="bd"]/div[@class="star"]/span[@class="rating_num"]/text()')[0]
       # 电影评价人数
-      rating_people_count = i.xpath('div[@class="bd"]/div[@class="star"]/span[last()]/text()')[0]
+      pattern = re.compile(r'^\d+')
+      rating_people_count = re.search(pattern, i.xpath('div[@class="info"]/div[@class="bd"]/div[@class="star"]/span[last()]/text()')[0]).group()
+      # 电影 slogan
+      movie_slogan = i.xpath('div[@class="info"]/div[@class="bd"]//span[@class="inq"]/text()')[0]
+      # 电影海报
+      movie_img = i.xpath('div[@class="pic"]//img/@src')[0]
 
-      data = (movie_index, movie_title, movie_info, move_rating_num, rating_people_count)
+      data = (movie_index, movie_title, movie_info, movie_rating_num, rating_people_count, movie_slogan, movie_img)
       save_data(data)
     except: 
       print('err')
@@ -53,9 +59,9 @@ def save_data(data):
   ab+：以二进制读写模式打开 (参见 a+ )
   """
   with open(FILE_NAME, 'a') as f:
-    movie = "TOP%s:\n电影名称：%s\n电影信息：%s\n电影评分：%s\n电影评价人数：%s\n"%(data)
+    movie = "TOP%s:\n电影名称：%s\n电影信息：%s\n电影评分：%s\n电影评价人数：%s\n电影 slogan：%s\n电影海报：%s\n"%(data)
     f.write(movie)
-    f.write('='*50 + '\n')
+    f.write('\n\n')
 
 def scraper():
   if os.path.exists(FILE_NAME):
